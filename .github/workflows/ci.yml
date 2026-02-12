@@ -32,7 +32,7 @@ jobs:
 
       - name: Configure Git for private GitHub dependencies
         env:
-          GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          GITHUB_PAT: ${{ secrets.GH_PAT }}
         run: |
           if [ -z "$GITHUB_PAT" ]; then
             echo "GITHUB_PAT secret is required for private dependencies."
