@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      ssh:
+        - default
+    volumes:
+      - ..:/workspace:cached
+      - ~/.ssh:/home/vscode/.ssh:ro
+      - ~/.gitconfig:/home/vscode/.gitconfig:ro
+    command: sleep infinity
+    environment:
+      - PYTHONUNBUFFERED=1
+    network_mode: host

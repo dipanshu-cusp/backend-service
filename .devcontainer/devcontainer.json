@@ -1,0 +1,35 @@
+{
+  "name": "Backend Service Dev Container",
+  "dockerComposeFile": "docker-compose.yaml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "${localEnv:SSH_AUTH_SOCK}"
+  },
+  "mounts": [
+    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.formatting.provider": "none",
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+          }
+        }
+      }
+    }
+  },
+  "postCreateCommand": "poetry install",
+  "remoteUser": "vscode"
+}
