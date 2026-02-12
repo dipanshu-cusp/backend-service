@@ -38,14 +38,23 @@ jobs:
             echo "GITHUB_PAT secret is required for private dependencies."
             exit 1
           fi
+          export GIT_TERMINAL_PROMPT=0
           git config --global url."https://x-access-token:${GITHUB_PAT}@github.com/".insteadOf "ssh://git@github.com/"
           git config --global url."https://x-access-token:${GITHUB_PAT}@github.com/".insteadOf "git@github.com:"
           git config --global url."https://x-access-token:${GITHUB_PAT}@github.com/".insteadOf "git+ssh://git@github.com/"
 
+      - name: Validate token can read shared-package
+        env:
+          GITHUB_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git ls-remote https://x-access-token:${GITHUB_PAT}@github.com/dipanshu-cusp/shared-package.git HEAD
+
       - name: Install dependencies
         env:
           POETRY_SYSTEM_GIT_CLIENT: "true"
-        run: poetry install --no-interaction --no-ansi
+        run: |
+          poetry config system-git-client true || poetry config experimental.system-git-client true || true
+          poetry install --no-interaction --no-ansi -v
 
       - name: Install lint/type tools
         run: poetry run python -m pip install ruff mypy
