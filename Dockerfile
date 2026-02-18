@@ -23,11 +23,11 @@ RUN mkdir -p -m 0700 /root/.ssh \
 
 COPY . .
 
-ARG GITHUB_TOKEN
-
 RUN --mount=type=ssh \
+    --mount=type=secret,id=github_token \
     set -e; \
-    if [ -n "${GITHUB_TOKEN}" ]; then \
+    if [ -f /run/secrets/github_token ]; then \
+        GITHUB_TOKEN=$(cat /run/secrets/github_token); \
         git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"; \
         git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "git@github.com:"; \
         sed -i "s|ssh://git@github.com/|https://${GITHUB_TOKEN}@github.com/|g" poetry.lock; \

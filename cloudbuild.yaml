@@ -5,10 +5,12 @@ steps:
     args:
       - -c
       - |
+        echo -n "$$GITHUB_TOKEN" > /tmp/github_token
         DOCKER_BUILDKIT=1 docker build \
-          --build-arg GITHUB_TOKEN=$$GITHUB_TOKEN \
+          --secret id=github_token,src=/tmp/github_token \
           -t asia-south1-docker.pkg.dev/project-a4281931-0724-4c2c-b3a/backend-service/backend-service-staging:$COMMIT_SHA \
           .
+        rm -f /tmp/github_token
 
 images:
   - asia-south1-docker.pkg.dev/project-a4281931-0724-4c2c-b3a/backend-service/backend-service-staging:$COMMIT_SHA
