@@ -14,7 +14,8 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH="/root/.local/bin:$PATH"
 
 RUN poetry config virtualenvs.create false
-RUN poetry config system-git-client true
+
+ENV POETRY_SYSTEM_GIT_CLIENT=true
 
 # avoid host verification issues
 RUN mkdir -p -m 0700 /root/.ssh \
