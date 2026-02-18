@@ -24,9 +24,17 @@ COPY . .
 
 ARG GITHUB_TOKEN
 
+ARG GITHUB_TOKEN
+
 RUN --mount=type=ssh \
-    if [ -n "$GITHUB_TOKEN" ]; then \
-        git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/".insteadOf "ssh://git@github.com/" && \
-        git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/".insteadOf "git@github.com:" ; \
-    fi && \
+    --mount=type=secret,id=github_token,required=false \
+    set -e; \
+    if [ -f /run/secrets/github_token ]; then \
+        GITHUB_TOKEN=$(cat /run/secrets/github_token); \
+        git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"; \
+        git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "git@github.com:"; \
+        echo "Using GitHub token authentication"; \
+    else \
+        echo "Using SSH authentication"; \
+    fi; \
     poetry install --no-root --no-interaction --no-ansi
