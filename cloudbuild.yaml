@@ -1,0 +1,22 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    entrypoint: bash
+    secretEnv: ['GITHUB_TOKEN']
+    args:
+      - -c
+      - |
+        DOCKER_BUILDKIT=1 docker build \
+          --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
+          -t asia-south1-docker.pkg.dev/project-a4281931-0724-4c2c-b3a/backend-service/backend-service-staging:$COMMIT_SHA \
+          .
+
+images:
+  - asia-south1-docker.pkg.dev/project-a4281931-0724-4c2c-b3a/backend-service/backend-service-staging:$COMMIT_SHA
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/github-token/versions/latest
+      env: GITHUB_TOKEN
+
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -1,0 +1,6 @@
+.venv
+.devcontainer
+.git
+.gitignore
+.idea
+.vscode
