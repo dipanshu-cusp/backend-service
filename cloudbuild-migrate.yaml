@@ -1,0 +1,27 @@
+steps:
+  - name: python:3.13-slim
+    id: db-migrate
+    entrypoint: bash
+    secretEnv: ['GITHUB_TOKEN']
+    args:
+      - -c
+      - |
+        apt-get update && apt-get install -y --no-install-recommends git openssh-client curl
+        curl -sSL https://install.python-poetry.org | python3 -
+        export PATH="/root/.local/bin:$$PATH"
+        poetry config virtualenvs.create false
+        export POETRY_SYSTEM_GIT_CLIENT=true
+        git config --global url."https://$$GITHUB_TOKEN@github.com/".insteadOf "ssh://git@github.com/"
+        git config --global url."https://$$GITHUB_TOKEN@github.com/".insteadOf "git@github.com:"
+        sed -i "s|ssh://git@github.com/|https://$$GITHUB_TOKEN@github.com/|g" poetry.lock
+        poetry install --no-root --no-interaction --no-ansi
+        python -c "import database; print('database package imported successfully')"
+        echo "Dependencies installed. Ready to run migrations."
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/github-token/versions/latest
+      env: GITHUB_TOKEN
+
+options:
+  logging: CLOUD_LOGGING_ONLY
