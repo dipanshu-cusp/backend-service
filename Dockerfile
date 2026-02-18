@@ -30,8 +30,8 @@ RUN --mount=type=ssh \
     if [ -n "${GITHUB_TOKEN}" ]; then \
         git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"; \
         git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "git@github.com:"; \
-        sed -i "s|ssh://git@github.com/|https://${GITHUB_TOKEN}@github.com/|g" pyproject.toml poetry.lock; \
-        sed -i "s|git@github.com:|https://${GITHUB_TOKEN}@github.com/|g" pyproject.toml poetry.lock; \
+        sed -i "s|ssh://git@github.com/|https://${GITHUB_TOKEN}@github.com/|g" poetry.lock; \
+        sed -i "s|git@github.com:|https://${GITHUB_TOKEN}@github.com/|g" poetry.lock; \
         echo "Using GitHub token authentication"; \
     else \
         echo "Using SSH authentication"; \
