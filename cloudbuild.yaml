@@ -6,7 +6,7 @@ steps:
       - -c
       - |
         DOCKER_BUILDKIT=1 docker build \
-          --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
+          --build-arg GITHUB_TOKEN=$$GITHUB_TOKEN \
           -t asia-south1-docker.pkg.dev/project-a4281931-0724-4c2c-b3a/backend-service/backend-service-staging:$COMMIT_SHA \
           .
 
