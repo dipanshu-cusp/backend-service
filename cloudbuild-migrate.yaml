@@ -6,9 +6,10 @@ steps:
     args:
       - -c
       - |
+        set -e
         apt-get update && apt-get install -y --no-install-recommends git openssh-client curl
         curl -sSL https://install.python-poetry.org | python3 -
-        export PATH="/root/.local/bin:$$PATH"
+        export PATH="$$HOME/.local/bin:$$PATH"
         poetry config virtualenvs.create false
         export POETRY_SYSTEM_GIT_CLIENT=true
         git config --global url."https://$$GITHUB_TOKEN@github.com/".insteadOf "ssh://git@github.com/"
