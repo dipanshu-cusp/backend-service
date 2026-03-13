@@ -32,3 +32,7 @@ RUN --mount=type=secret,id=GCP_TOKEN \
     poetry config --unset http-basic.gcp-repo
 
 COPY . .
+
+EXPOSE 8080
+
+CMD ["fastapi", "run", "src/server.py", "--port", "8080"]
