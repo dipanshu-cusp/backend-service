@@ -9,12 +9,19 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard] (>=0.128.1,<0.129.0)",
-    "database @ git+ssh://git@github.com/dipanshu-cusp/shared-package.git",
+    "database (>=1.0.0)",
 ]
 
 [tool.poetry]
 packages = [{include = "src"}]
 
+[tool.poetry.dependencies]
+database = {source = "gcp-repo"}
+
+[[tool.poetry.source]]
+name = "gcp-repo"
+url = "https://asia-south1-python.pkg.dev/project-a4281931-0724-4c2c-b3a/sample-database/simple/"
+priority = "explicit"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

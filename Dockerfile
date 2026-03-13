@@ -3,7 +3,7 @@
 FROM python:3.13-slim
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl git openssh-client \
+    && apt-get install -y --no-install-recommends curl git \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -15,26 +15,20 @@ RUN poetry config virtualenvs.create false
 
 ENV POETRY_SYSTEM_GIT_CLIENT=true
 
-# avoid host verification issues
-RUN mkdir -p -m 0700 /root/.ssh \
-    && ssh-keyscan github.com >> /root/.ssh/known_hosts
-
 # install dependencies before copying source for better layer caching
 COPY pyproject.toml poetry.lock ./
 
-RUN --mount=type=ssh \
-    --mount=type=secret,id=github_token \
+RUN --mount=type=secret,id=GCP_TOKEN \
     set -e; \
-    cp poetry.lock poetry.lock.bak; \
-    if [ -f /run/secrets/github_token ]; then \
-        GITHUB_TOKEN=$(cat /run/secrets/github_token); \
-        sed -i "s|ssh://git@github.com/|https://${GITHUB_TOKEN}@github.com/|g" poetry.lock; \
-        sed -i "s|git@github.com:|https://${GITHUB_TOKEN}@github.com/|g" poetry.lock; \
-        echo "Using GitHub token authentication"; \
+    if [ -f /run/secrets/GCP_TOKEN ]; then \
+        GCP_TOKEN=$(cat /run/secrets/GCP_TOKEN); \
+        poetry config http-basic.gcp-repo oauth2accesstoken "${GCP_TOKEN}"; \
+        echo "Using GCP Artifact Registry token authentication"; \
     else \
-        echo "Using SSH authentication"; \
+        echo "Missing GCP token secret at /run/secrets/GCP_TOKEN"; \
+        exit 1; \
     fi; \
     poetry install --no-root --no-interaction --no-ansi; \
-    mv poetry.lock.bak poetry.lock
+    poetry config --unset http-basic.gcp-repo
 
 COPY . .
